@@ -362,5 +362,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Игнорируем файлы из Image
+# Ignoring files from Image
 Image/
+
+# Ignoring files *.zip
+*.zip
