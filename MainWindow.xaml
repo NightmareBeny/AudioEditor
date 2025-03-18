@@ -35,7 +35,7 @@
                         </Grid.ColumnDefinitions>
                         <Button Name="PlayPauseButton" Template="{StaticResource RoundButton}" Background="LimeGreen" Margin="5" Grid.Column="0" MaxWidth="100"
                                 Click="PlayPauseButton_Click" MouseEnter="PlayPauseButton_MouseEnter" MouseLeave="PlayPauseButton_MouseLeave">
-                            <Image Source="/Image/pause_play.png"/>
+                            <Image Source="/Image/PausePlay.png"/>
                         </Button>
                         <Button  Name="StopButton" Template="{StaticResource RoundButton}" Background="Crimson" Margin="5" Grid.Column="1" MaxWidth="100"
                                  Click="StopButton_Click" MouseEnter="StopButton_MouseEnter" MouseLeave="StopButton_MouseLeave">
