@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <RootNamespace>Обрезка_аудио</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Image\PauseButton.png" />
+    <None Remove="Image\PlayButton.png" />
+    <None Remove="Image\StopButton.png" />
+    <None Remove="Image\waveform.png" />
+    <None Remove="wpfsvl-Source.zip" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NAudio.WaveFormRenderer" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Image\PauseButton.png" />
+    <Resource Include="Image\PlayButton.png" />
+    <Resource Include="Image\StopButton.png" />
+    <Resource Include="Image\waveform.png" />
+  </ItemGroup>
+
+</Project>

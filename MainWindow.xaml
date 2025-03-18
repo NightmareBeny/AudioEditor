@@ -1,0 +1,63 @@
+﻿<Window x:Class="Обрезка_аудио.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Обрезка_аудио"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="800">
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Открыть" Name="Open"/>
+                <Separator/>
+                <MenuItem Header="Сохранить" Name="Save"/>
+                <MenuItem Header="Сохранить как" Name="SaveAs"/>
+            </MenuItem>
+            <MenuItem Header="Справка" Name="Help"/>
+        </Menu>
+        <TabControl>
+            <TabItem Header="Аудиодорожка" Name="Audio">
+                <StackPanel VerticalAlignment="Center">
+                    <MediaElement Stretch="Fill" LoadedBehavior="Manual" UnloadedBehavior="Stop" MediaOpened="Element_MediaOpened" MediaEnded="Element_MediaEnded"
+                                  Source="C:\Users\naitm\Desktop\ГЗ\Обрезка аудио\Image\Tokijjskijj_gul_-_Opening_original_1_sezon_60672129.mp3"
+                                  Name="MediaAudio"/>
+                    <Image Source="/Image/waveform.png" HorizontalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <!-- Play button. -->
+                        <Image Source="/Image/PlayButton.png" MouseDown="OnMouseDownPlayMedia" Width="50" Margin="5" />
+                        <!-- Pause button. -->
+                        <Image Source="/Image/PauseButton.png" MouseDown="OnMouseDownPauseMedia" Width="50" Margin="5" />
+                        <!-- Stop button. -->
+                        <Image Source="/Image/StopButton.png" MouseDown="OnMouseDownStopMedia" Width="50" Margin="5" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <!-- Volume slider. This slider allows a Volume range between 0 and 1. -->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center" Margin="5">Громкость</TextBlock>
+                            <Slider Name="volumeSlider" VerticalAlignment="Center" ValueChanged="ChangeMediaVolume" 
+                            Minimum="0" Maximum="1" Value="0.5" Width="70"/>
+                        </StackPanel>
+                        <!-- Volume slider. This slider allows you to change the speed of the media playback. -->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5"  VerticalAlignment="Center">Скорость воспроизведения</TextBlock>
+                            <Slider Name="speedRatioSlider" VerticalAlignment="Center" ValueChanged="ChangeMediaSpeedRatio" 
+                                Value="1" Width="70" />
+                        </StackPanel>
+                        <!-- Seek to slider. Ths slider allows you to jump to different parts of the media playback. -->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5"  VerticalAlignment="Center">Поиск</TextBlock>
+                            <Slider Name="timelineSlider" Margin="5" ValueChanged="SeekToMediaPosition" Width="70"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Спектрограмма" Name="Spectr">
+                
+            </TabItem>
+            <TabItem Header="Мел-спектрограмма" Name="MelSpectr">
+                
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
