@@ -16,40 +16,11 @@ namespace Обрезка_аудио
     /// </summary>
     public partial class MainWindow : Window
     {
+        bool isPlay = false;
+
         public MainWindow()
         {
             InitializeComponent();
-        }
-
-        // Play the media.
-        void OnMouseDownPlayMedia(object sender, MouseButtonEventArgs args)
-        {
-
-            // The Play method will begin the media if it is not currently active or
-            // resume media if it is paused. This has no effect if the media is
-            // already running.
-            MediaAudio.Play();
-
-            // Initialize the MediaElement property values.
-            InitializePropertyValues();
-        }
-
-        // Pause the media.
-        void OnMouseDownPauseMedia(object sender, MouseButtonEventArgs args)
-        {
-
-            // The Pause method pauses the media if it is currently running.
-            // The Play method can be used to resume.
-            MediaAudio.Pause();
-        }
-
-        // Stop the media.
-        void OnMouseDownStopMedia(object sender, MouseButtonEventArgs args)
-        {
-
-            // The Stop method stops and resets the media to be played from
-            // the beginning.
-            MediaAudio.Stop();
         }
 
         // Change the volume of the media.
@@ -58,19 +29,12 @@ namespace Обрезка_аудио
             MediaAudio.Volume = (double)volumeSlider.Value;
         }
 
-        // Change the speed of the media.
-        private void ChangeMediaSpeedRatio(object sender, RoutedPropertyChangedEventArgs<double> args)
-        {
-            MediaAudio.SpeedRatio = (double)speedRatioSlider.Value;
-        }
-
         // When the media opens, initialize the "Seek To" slider maximum value
         // to the total number of miliseconds in the length of the media clip.
         private void Element_MediaOpened(object sender, EventArgs e)
         {
             if (MediaAudio.NaturalDuration.HasTimeSpan)
                 timelineSlider.Maximum = MediaAudio.NaturalDuration.TimeSpan.TotalMilliseconds;
-            Console.WriteLine(MediaAudio.NaturalDuration.HasTimeSpan);
         }
 
         // When the media playback is finished. Stop() the media to seek to media start.
@@ -95,7 +59,51 @@ namespace Обрезка_аудио
             // Set the media's starting Volume and SpeedRatio to the current value of the
             // their respective slider controls.
             MediaAudio.Volume = (double)volumeSlider.Value;
-            MediaAudio.SpeedRatio = (double)speedRatioSlider.Value;
+        }
+
+        private void PlayPauseButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            PlayPauseButton.Background = Brushes.LawnGreen;
+        }
+
+        private void PlayPauseButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            PlayPauseButton.Background = Brushes.LimeGreen;
+        }
+
+        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!isPlay)
+            {
+                // Play the media
+                MediaAudio.Play();
+                isPlay = true;
+            }
+            else
+            {
+                // Pause the media.
+                MediaAudio.Pause();
+                isPlay= false;
+            }
+            // Initialize the MediaElement property values.
+            InitializePropertyValues();
+        }
+
+        private void StopButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            StopButton.Background = Brushes.Red;
+        }
+
+        private void StopButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            StopButton.Background = Brushes.Crimson;
+        }
+
+        // Stop the media
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            MediaAudio.Stop();
+            isPlay = false;
         }
     }
 }
