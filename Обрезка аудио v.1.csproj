@@ -12,8 +12,8 @@
   <ItemGroup>
     <None Remove="Image\PauseButton.png" />
     <None Remove="Image\PlayButton.png" />
-    <None Remove="Image\StopButton.png" />
-    <None Remove="Image\StopButton2.png" />
+    <None Remove="Image\stopButton.png" />
+    <None Remove="Image\stopButton2.png" />
     <None Remove="Image\waveform.png" />
     <None Remove="wpfsvl-Source.zip" />
   </ItemGroup>
@@ -25,8 +25,8 @@
 
   <ItemGroup>
     <Resource Include="Image\PausePlay.png" />
-    <Resource Include="Image\StopButton.png" />
-    <Resource Include="Image\StopButton2.png" />
+    <Resource Include="Image\stopButton.png" />
+    <Resource Include="Image\stopButton2.png" />
     <Resource Include="Image\waveform.png" />
   </ItemGroup>
 
