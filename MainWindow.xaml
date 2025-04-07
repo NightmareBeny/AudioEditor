@@ -28,17 +28,16 @@
                     <MediaElement Name="mediaAudio" Stretch="Fill" LoadedBehavior="Manual" UnloadedBehavior="Stop" MediaOpened="Element_MediaOpened" MediaEnded="Element_MediaEnded"
                                   Source="C:\Users\naitm\Desktop\ГЗ\Обрезка аудио\Image\Tokijjskijj_gul_-_Opening_original_1_sezon_60672129.mp3"/>
                     <Image Name="waveform" Source="/Image/waveform.png" Margin="50 0" HorizontalAlignment="Center" Grid.Row="0" Stretch="Fill"/>
-                    <StatusBar Grid.Row="0" Background="Transparent"  Margin="{Binding ElementName=waveform, Path=Margin}">
-                        <StatusBarItem HorizontalContentAlignment="Stretch">
-                            <!-- Seek to slider. Ths slider allows you to jump to different parts of the media playback. -->
-                            <Slider Name="timelineSlider" ValueChanged="SeekToMediaPosition" Cursor="Hand"/>
-                        </StatusBarItem>
-                    </StatusBar>
+                    <!--Seek to slider. Ths slider allows you to jump to different parts of the media playback.-->
+                    <local:ThreeSlider x:Name="timelineSlider" Grid.Row="0" VerticalAlignment="Center" Margin="{Binding ElementName=waveform, Path=Margin}" Cursor="Hand"
+                                       LeftValueChanged="timelineSlider_LeftValueChanged" MiddleValueChanged="timelineSlider_MiddleValueChanged" RightValueChanged="timelineSlider_RightValueChanged"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <TextBlock Name="time" VerticalAlignment="Center" Margin="5">Время</TextBlock>
-                        <TextBox Name="timeLine" VerticalAlignment="Center" Visibility="Hidden"></TextBox>
+                        <TextBox Name="leftTimeLine" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center"> - </TextBlock>
                         <!--<TextBox Name="timeLine" Width="50" VerticalAlignment="Center"></TextBox>-->
-                        <TextBlock Name="duration" VerticalAlignment="Center"></TextBlock>
+                        <TextBox Name="rightTimeLine" VerticalAlignment="Center"/>
+                        <TextBlock Name="duration" VerticalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Grid.Row="2" Orientation="Horizontal">
                         <Button Name="playPauseButton" Style="{DynamicResource PlayPauseButton}" Margin="5" MaxWidth="100" MaxHeight="100" Cursor="Hand" Click="PlayPauseButton_Click">

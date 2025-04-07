@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -23,15 +24,22 @@ namespace Обрезка_аудио
         public MainWindow()
         {
             InitializeComponent();
+            leftTimeLine.Text = "00:00:00";
+            rightTimeLine.Text = "00:00:00";
         }
 
-        // When the media opens, initialize the "Seek To" slider maximum value
-        // to the total number of miliseconds in the length of the media clip.
+        // When the media opens, initialize the timelineSlider maximum value to the total number of miliseconds in the length of the media clip.
         private void Element_MediaOpened(object sender, EventArgs e)
         {
             if (mediaAudio.NaturalDuration.HasTimeSpan)
             {
                 timelineSlider.Maximum = mediaAudio.NaturalDuration.TimeSpan.TotalMilliseconds;
+                timelineSlider.RightValue = timelineSlider.Maximum;
+                timelineSlider.Minimum = 0;
+                timelineSlider.LeftValue = timelineSlider.Minimum;
+                leftTimeLine.Text = TimeSpan.FromMilliseconds(timelineSlider.LeftValue).ToString(@"hh\:mm\:ss");
+                rightTimeLine.Text = TimeSpan.FromMilliseconds(timelineSlider.RightValue).ToString(@"hh\:mm\:ss");
+                duration.Text = $" (Общее время: {TimeSpan.FromSeconds(mediaAudio.NaturalDuration.TimeSpan.TotalSeconds):hh\\:mm\\:ss})";
                 var timer = new DispatcherTimer();
                 timer.Interval = TimeSpan.FromSeconds(1);
                 timer.Tick += TimerTick;
@@ -47,24 +55,35 @@ namespace Обрезка_аудио
 
         private void TimerTick(object sender, EventArgs e)
         {
-            if ((mediaAudio.Source != null) && (mediaAudio.NaturalDuration.HasTimeSpan))
+            if (mediaAudio.Source != null && mediaAudio.NaturalDuration.HasTimeSpan && isPlay)
             {
-                timelineSlider.Value = mediaAudio.Position.TotalMilliseconds;
+                timelineSlider.MiddleValue = mediaAudio.Position.TotalMilliseconds;
             }
         }
 
         // Jump to different parts of the media (seek to).
-        private void SeekToMediaPosition(object sender, RoutedPropertyChangedEventArgs<double> args)
+        private void timelineSlider_MiddleValueChanged(object sender, EventArgs e)
         {
-            int SliderValue = (int)timelineSlider.Value;
-            mediaAudio.Position = TimeSpan.FromSeconds(timelineSlider.Value);
-            // Overloaded constructor takes the arguments days, hours, minutes, seconds, milliseconds.
-            // Create a TimeSpan with miliseconds equal to the slider value.
-            var ts = new TimeSpan(0, 0, 0, 0, SliderValue);
-            mediaAudio.Position = ts;
-            timeLine.Visibility = Visibility.Visible;
-            timeLine.Text = TimeSpan.FromSeconds(ts.TotalSeconds).ToString(@"hh\:mm\:ss");
-            duration.Text = $" - {TimeSpan.FromSeconds(mediaAudio.NaturalDuration.TimeSpan.TotalSeconds):hh\\:mm\\:ss}";
+            if (timelineSlider.MiddleValue < timelineSlider.RightValue)
+            {
+                mediaAudio.Position = TimeSpan.FromMilliseconds(timelineSlider.MiddleValue);
+                leftTimeLine.Text = TimeSpan.FromMilliseconds(timelineSlider.MiddleValue).ToString(@"hh\:mm\:ss");
+            }
+            else timelineSlider_LeftValueChanged(sender, e);
+        }
+
+        private void timelineSlider_LeftValueChanged(object sender, EventArgs e)
+        {
+            mediaAudio.Pause();
+            leftTimeLine.Text = TimeSpan.FromMilliseconds(timelineSlider.LeftValue).ToString(@"hh\:mm\:ss");
+            timelineSlider.MiddleValue = timelineSlider.LeftValue;
+            mediaAudio.Position = TimeSpan.FromMilliseconds(timelineSlider.MiddleValue);
+            mediaAudio.Play();
+        }
+
+        private void timelineSlider_RightValueChanged(object sender, EventArgs e)
+        {
+            rightTimeLine.Text = TimeSpan.FromMilliseconds(timelineSlider.RightValue).ToString(@"hh\:mm\:ss");
         }
 
         // Change the volume of the media.
@@ -91,7 +110,7 @@ namespace Обрезка_аудио
             {
                 // Pause the media.
                 mediaAudio.Pause();
-                isPlay= false;
+                isPlay = false;
             }
             // Initialize the MediaElement property values.
             InitializePropertyValues();
@@ -100,8 +119,10 @@ namespace Обрезка_аудио
         // Stop the media
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            mediaAudio.Stop();
+            mediaAudio.Pause();
             isPlay = false;
+            timelineSlider.MiddleValue = timelineSlider.LeftValue;
+            mediaAudio.Position = TimeSpan.FromMilliseconds(timelineSlider.MiddleValue);
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -119,7 +140,7 @@ namespace Обрезка_аудио
             stopButton.Height *= yChange;
             playPauseButton.Width *= xChange;
             playPauseButton.Height *= yChange;
-            if (xChange>1 && yChange>1)
+            if (xChange > 1 && yChange > 1)
                 volumeSlider.RenderTransform = new ScaleTransform(1.9, 1.9);
             else volumeSlider.RenderTransform = new ScaleTransform(1, 1);
         }

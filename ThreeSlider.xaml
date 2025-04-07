@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="Обрезка_аудио.ThreeSlider"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Name="root">
+    <UserControl.Resources>
+        <ControlTemplate x:Key="ThreeSlider" TargetType="{x:Type Slider}">
+            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                    </Grid.RowDefinitions>
+                    <Rectangle x:Name="PART_SelectionRange"/>
+                    <Track x:Name="PART_Track">
+                        <Track.Thumb>
+                            <Thumb x:Name="Thumb">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="Thumb">
+                                        <Rectangle Fill="Red" Stroke="Black" StrokeThickness="1" Width="10" Height="18" SnapsToDevicePixels="True"/>
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                        </Track.Thumb>
+                    </Track>
+                </Grid>
+            </Border>
+            <!--<ControlTemplate.Triggers>
+            <Trigger Property="TickPlacement" Value="TopLeft">
+                <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
+                <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbHorizontalTop}"/>
+                <Setter Property="Margin" TargetName="TrackBackground" Value="5,2,5,0"/>
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="BottomRight">
+                <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
+                <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbHorizontalBottom}"/>
+                <Setter Property="Margin" TargetName="TrackBackground" Value="5,0,5,2"/>
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="Both">
+                <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
+                <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="IsSelectionRangeEnabled" Value="true">
+                <Setter Property="Visibility" TargetName="PART_SelectionRange" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="true">
+                <Setter Property="Foreground" TargetName="Thumb" Value="Blue"/>
+            </Trigger>
+        </ControlTemplate.Triggers>-->
+        </ControlTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Border BorderThickness="1,1,1,0" BorderBrush="Black" VerticalAlignment="Center"/>
+        <Slider x:Name="leftSlider" Template="{StaticResource ThreeSlider}" Margin="0,0,10,0"
+            Minimum="{Binding ElementName=root, Path=Minimum}"
+            Maximum="{Binding ElementName=root, Path=Maximum}"
+            Value="{Binding ElementName=root, Path=LeftValue}" ValueChanged="LeftSlider_ValueChanged"/>
+        <Slider x:Name="middleSlider" Template="{StaticResource ThreeSlider}" Margin="10,0,10,0"
+            Minimum="{Binding ElementName=root, Path=Minimum}"
+            Maximum="{Binding ElementName=root, Path=Maximum}"
+            Value="{Binding ElementName=root, Path=MiddleValue}" ValueChanged="MiddleSlider_ValueChanged"/>
+        <Slider x:Name="rightSlider" Template="{StaticResource ThreeSlider}" Margin="20,0,0,0"
+            Minimum="{Binding ElementName=root, Path=Minimum}"
+            Maximum="{Binding ElementName=root, Path=Maximum}"
+            Value="{Binding ElementName=root, Path=RightValue}" ValueChanged="RightSlider_ValueChanged"/>
+    </Grid>
+</UserControl>
