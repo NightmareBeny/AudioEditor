@@ -367,3 +367,4 @@ Image/
 
 # Ignoring files *.zip
 *.zip
+/Audio
