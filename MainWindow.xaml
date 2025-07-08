@@ -9,9 +9,9 @@
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Файл">
-                <MenuItem Header="Открыть" Name="open"/>
+                <MenuItem Header="Открыть" Name="open" Click="open_Click"/>
                 <Separator/>
-                <MenuItem Header="Сохранить" Name="save"/>
+                <MenuItem Header="Сохранить" Name="save" Click="save_Click"/>
                 <MenuItem Header="Сохранить как" Name="saveAs"/>
             </MenuItem>
             <MenuItem Header="Настройки" Name="settings"/>
@@ -25,11 +25,10 @@
                         <RowDefinition Height="0.3*"/>
                         <RowDefinition Height="0.5*"/>
                     </Grid.RowDefinitions>
-                    <MediaElement Name="mediaAudio" Stretch="Fill" LoadedBehavior="Manual" UnloadedBehavior="Stop" MediaOpened="Element_MediaOpened" MediaEnded="Element_MediaEnded"
-                                  Source="C:\Users\naitm\Desktop\ГЗ\Обрезка аудио\Image\Tokijjskijj_gul_-_Opening_original_1_sezon_60672129.mp3"/>
-                    <Image Name="waveform" Source="/Image/waveform.png" Margin="50 0" HorizontalAlignment="Center" Grid.Row="0" Stretch="Fill"/>
+                    <MediaElement Name="mediaAudio" Stretch="Fill" LoadedBehavior="Manual" UnloadedBehavior="Stop" MediaOpened="Element_MediaOpened" MediaEnded="Element_MediaEnded"/>
+                    <Image Name="waveform" Margin="50 0" HorizontalAlignment="Center" Stretch="Fill"/>
                     <!--Seek to slider. Ths slider allows you to jump to different parts of the media playback.-->
-                    <local:ThreeSlider x:Name="timelineSlider" Grid.Row="0" VerticalAlignment="Center" Margin="{Binding ElementName=waveform, Path=Margin}" Cursor="Hand"
+                    <local:ThreeSlider x:Name="timelineSlider" Visibility="Hidden" VerticalAlignment="Center" Margin="{Binding ElementName=waveform, Path=Margin}" Cursor="Hand"
                                        LeftValueChanged="timelineSlider_LeftValueChanged" MiddleValueChanged="timelineSlider_MiddleValueChanged" RightValueChanged="timelineSlider_RightValueChanged"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <TextBlock Name="time" VerticalAlignment="Center" Margin="5">Время</TextBlock>

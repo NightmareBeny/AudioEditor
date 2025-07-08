@@ -12,6 +12,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Microsoft.Win32;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using System.Diagnostics;
+using System.IO;
 
 namespace Обрезка_аудио
 {
@@ -21,6 +25,8 @@ namespace Обрезка_аудио
     public partial class MainWindow : Window
     {
         private bool isPlay = false;
+        AudioRender audioRender = new();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -33,6 +39,7 @@ namespace Обрезка_аудио
         {
             if (mediaAudio.NaturalDuration.HasTimeSpan)
             {
+                timelineSlider.Visibility = Visibility.Visible;
                 timelineSlider.Maximum = mediaAudio.NaturalDuration.TimeSpan.TotalMilliseconds;
                 timelineSlider.RightValue = timelineSlider.Maximum;
                 timelineSlider.Minimum = 0;
@@ -100,20 +107,23 @@ namespace Обрезка_аудио
 
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!isPlay)
+            if (waveform.Source is not null)
             {
-                // Play the media
-                mediaAudio.Play();
-                isPlay = true;
+                if (!isPlay)
+                {
+                    // Play the media
+                    mediaAudio.Play();
+                    isPlay = true;
+                }
+                else
+                {
+                    // Pause the media.
+                    mediaAudio.Pause();
+                    isPlay = false;
+                }
+                // Initialize the MediaElement property values.
+                InitializePropertyValues();
             }
-            else
-            {
-                // Pause the media.
-                mediaAudio.Pause();
-                isPlay = false;
-            }
-            // Initialize the MediaElement property values.
-            InitializePropertyValues();
         }
 
         // Stop the media
@@ -143,6 +153,39 @@ namespace Обрезка_аудио
             if (xChange > 1 && yChange > 1)
                 volumeSlider.RenderTransform = new ScaleTransform(1.9, 1.9);
             else volumeSlider.RenderTransform = new ScaleTransform(1, 1);
+        }
+
+        private void open_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "WAV files (*.wav)|*.wav|All files (*.*)|*.*";
+            openFileDialog.InitialDirectory = Environment.ProcessPath;
+            if (openFileDialog.ShowDialog() == true)
+            {
+                // Create source
+                BitmapImage myBitmapImage = new BitmapImage();
+                // BitmapImage.UriSource must be in a BeginInit/EndInit block
+                myBitmapImage.BeginInit();
+                myBitmapImage.UriSource = new Uri(audioRender.MakeImageFromAudio(openFileDialog.FileName), UriKind.Absolute);
+                myBitmapImage.EndInit();
+                waveform.Source = myBitmapImage;
+                mediaAudio.Source = new Uri(openFileDialog.FileName, UriKind.Absolute);
+            }
+        }
+
+        private void save_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "WAV files (*.wav)|*.wav";
+            saveFileDialog.InitialDirectory = Environment.ProcessPath;
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                using (var reader = new AudioFileReader(audioRender.PathToAudio))
+                {
+                    reader.CurrentTime = TimeSpan.FromMicroseconds(timelineSlider.RightValue); // jump forward to the position we want to start from
+                    WaveFileWriter.CreateWaveFile16(saveFileDialog.FileName, reader.Take(new TimeSpan(0, 0, 0, 0, 1)));
+                }
+            }
         }
     }
 }

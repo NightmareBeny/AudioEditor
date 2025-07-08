@@ -7,10 +7,12 @@ namespace Обрезка_аудио
 {
     class AudioRender
     {
-        public AudioRender()
-        {
-            var myPeakProvider = new RmsPeakProvider(200);
+        public AudioRender() {}
 
+        public string? PathToAudio { get; set; }
+
+        public string MakeImageFromAudio(string pathAudio)
+        {
             //var topSpacerColor = Color.FromArgb(255, 255, 255, 255);
             //var myRendererSettings = new SoundCloudBlockWaveFormSettings(Color.FromArgb(196, 197, 53, 0), topSpacerColor, Color.FromArgb(196, 79, 26, 0),
             //    topSpacerColor)
@@ -19,7 +21,7 @@ namespace Обрезка_аудио
             //    TopHeight = 100,
             //    BottomHeight = 100
             //};
-
+            PathToAudio = pathAudio;
             var myRendererSettings = new StandardWaveFormRendererSettings()
             {
                 Width = 1000,
@@ -29,13 +31,11 @@ namespace Обрезка_аудио
                 BottomPeakPen = new Pen(Color.FromArgb(196, 79, 26, 0)),
                 BackgroundColor = Color.White
             };
-
-            var renderer = new WaveFormRenderer();
-            var audioFilePath = "C:\\Users\\naitm\\Desktop\\ГЗ\\Обрезка аудио\\Image\\Tokijjskijj_gul_-_Opening_original_1_sezon_60672129.mp3";
-            var waveStream = new AudioFileReader(audioFilePath);
-            var image = renderer.Render(waveStream, myPeakProvider, myRendererSettings);
-
-            image.Save("C:\\Users\\naitm\\Desktop\\ГЗ\\Обрезка аудио\\Image\\waveform.png", ImageFormat.Png);
+            var image = new WaveFormRenderer().Render(new AudioFileReader(pathAudio), new RmsPeakProvider(200), myRendererSettings);
+            var index = Environment.ProcessPath.ToLower().IndexOf("обрезка аудио") + "обрезка аудио".Length + 1;
+            var pathToImage = Environment.ProcessPath.Substring(0, index) + "Image\\waveform2.png";
+            image.Save(pathToImage, ImageFormat.Png);
+            return pathToImage;
         }
     }
 }
