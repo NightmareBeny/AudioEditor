@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Обрезка_аудио"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="800" SizeChanged="Window_SizeChanged">
+        Title="MainWindow" Height="350" Width="810" SizeChanged="Window_SizeChanged">
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Файл">
@@ -21,7 +21,7 @@
             <TabItem Header="Аудиодорожка" Name="audio">
                 <Grid Margin="0 30">
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="0.3*"/>
                         <RowDefinition Height="0.5*"/>
                     </Grid.RowDefinitions>
@@ -32,23 +32,28 @@
                                        LeftValueChanged="timelineSlider_LeftValueChanged" MiddleValueChanged="timelineSlider_MiddleValueChanged" RightValueChanged="timelineSlider_RightValueChanged"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <TextBlock Name="time" VerticalAlignment="Center" Margin="5">Время</TextBlock>
-                        <TextBox Name="leftTimeLine" VerticalAlignment="Center"/>
-                        <TextBlock VerticalAlignment="Center"> - </TextBlock>
-                        <!--<TextBox Name="timeLine" Width="50" VerticalAlignment="Center"></TextBox>-->
-                        <TextBox Name="rightTimeLine" VerticalAlignment="Center"/>
+                        <TextBox Name="leftTimeLine" VerticalAlignment="Center">00:00:00</TextBox>
+                        <TextBlock VerticalAlignment="Center">-</TextBlock>
+                        <TextBox Name="rightTimeLine" VerticalAlignment="Center">00:00:00</TextBox>
                         <TextBlock Name="duration" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="2" Orientation="Horizontal">
-                        <Button Name="playPauseButton" Style="{DynamicResource PlayPauseButton}" Margin="5" MaxWidth="100" MaxHeight="100" Cursor="Hand" Click="PlayPauseButton_Click">
-                            <Image Source="/Image/PausePlay.png"/>
-                        </Button>
-                        <Button Name="stopButton" Style="{DynamicResource StopButton}" Margin="5" MaxWidth="100" MaxHeight="100" Cursor="Hand" Click="StopButton_Click">
-                            <Image Source="/Image/stopButton.png"/>
-                        </Button>
-                        <!-- volume slider. This slider allows a volume range between 0 and 1. -->
-                        <TextBlock Name="volume" VerticalAlignment="Center" Margin="5">Громкость</TextBlock>
-                        <Slider Name="volumeSlider" VerticalAlignment="Center" Minimum="0" Maximum="1" Value="0.5" Width="100" Cursor="Hand" ValueChanged="ChangeMediavolume"/>
-                    </StackPanel>
+                    <DockPanel Grid.Row="2">
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                            <Button Name="playPauseButton" Style="{DynamicResource PlayPauseButton}" Margin="5" MaxWidth="100" MaxHeight="100" Cursor="Hand" Click="PlayPauseButton_Click">
+                                <Image Source="/Image/PausePlay.png"/>
+                            </Button>
+                            <Button Name="stopButton" Style="{DynamicResource StopButton}" Margin="5" MaxWidth="100" MaxHeight="100" Cursor="Hand" Click="StopButton_Click">
+                                <Image Source="/Image/stopButton.png"/>
+                            </Button>
+                            <!-- volume slider. This slider allows a volume range between 0 and 1. -->
+                            <TextBlock Name="volume" VerticalAlignment="Center" Margin="5">Громкость</TextBlock>
+                            <Slider Name="volumeSlider" VerticalAlignment="Center" Minimum="0" Maximum="1" Value="0.5" Width="100" Cursor="Hand" ValueChanged="ChangeMediavolume"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="5 0" HorizontalAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Right">
+                            <CheckBox Name="checkbox" VerticalContentAlignment="Center" Content="Нарезать на одинаковые по длине отрезки времени"/>
+                            <TextBox Name="checkboxTime" VerticalAlignment="Center" Margin="5 0 0 0">00:00:00</TextBox>
+                        </StackPanel>
+                    </DockPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="Спектрограмма" Name="Spectr">

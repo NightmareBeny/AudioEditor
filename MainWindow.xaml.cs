@@ -145,14 +145,21 @@ namespace Обрезка_аудио
 
             volume.FontSize *= xChange;
             time.FontSize *= xChange;
+            checkboxTime.FontSize *= xChange;
+            leftTimeLine.FontSize *= xChange;
+            rightTimeLine.FontSize *= xChange;
+            duration.FontSize *= xChange;
 
-            stopButton.Width *= xChange;
-            stopButton.Height *= yChange;
-            playPauseButton.Width *= xChange;
-            playPauseButton.Height *= yChange;
             if (xChange > 1 && yChange > 1)
-                volumeSlider.RenderTransform = new ScaleTransform(1.9, 1.9);
-            else volumeSlider.RenderTransform = new ScaleTransform(1, 1);
+            {
+                volumeSlider.LayoutTransform = new ScaleTransform(1.9, 1.9);
+                checkbox.LayoutTransform = new ScaleTransform(1.9, 1.9);
+            }
+            else
+            {
+                volumeSlider.LayoutTransform = new ScaleTransform(1, 1);
+                checkbox.LayoutTransform = new ScaleTransform(1, 1);
+            }
         }
 
         private void open_Click(object sender, RoutedEventArgs e)
@@ -180,10 +187,18 @@ namespace Обрезка_аудио
             saveFileDialog.InitialDirectory = Environment.ProcessPath;
             if (saveFileDialog.ShowDialog() == true)
             {
-                using (var reader = new AudioFileReader(audioRender.PathToAudio))
+                var source = new AudioFileReader(audioRender.PathToAudio);
+                var start = TimeSpan.FromMilliseconds(timelineSlider.LeftValue);
+                var end = TimeSpan.FromMilliseconds(timelineSlider.RightValue) - start;
+                var nameOfFiles = new string[(int)Math.Round(end.TotalSeconds, MidpointRounding.AwayFromZero)];
+                var substring = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.Length - 4);
+                for (var i = 0; i < nameOfFiles.Length; i++) nameOfFiles[i] = substring + '_' + (i + 1) + ".wav";
+                foreach(var i in nameOfFiles)
                 {
-                    reader.CurrentTime = TimeSpan.FromMicroseconds(timelineSlider.RightValue); // jump forward to the position we want to start from
-                    WaveFileWriter.CreateWaveFile16(saveFileDialog.FileName, reader.Take(new TimeSpan(0, 0, 0, 0, 1)));
+                    source.CurrentTime = start;
+                    var trimmed = source.Take(TimeSpan.FromSeconds(1));
+                    WaveFileWriter.CreateWaveFile16(i, trimmed);
+                    start += TimeSpan.FromSeconds(1);
                 }
             }
         }
