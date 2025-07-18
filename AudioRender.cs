@@ -2,6 +2,7 @@
 using System.Drawing;
 using NAudio.Wave;
 using NAudio.WaveFormRenderer;
+using System.IO;
 
 namespace Обрезка_аудио
 {
@@ -11,7 +12,7 @@ namespace Обрезка_аудио
 
         public string? PathToAudio { get; set; }
 
-        public string MakeImageFromAudio(string pathAudio)
+        public MemoryStream MakeImageFromAudio(string pathAudio)
         {
             //var topSpacerColor = Color.FromArgb(255, 255, 255, 255);
             //var myRendererSettings = new SoundCloudBlockWaveFormSettings(Color.FromArgb(196, 197, 53, 0), topSpacerColor, Color.FromArgb(196, 79, 26, 0),
@@ -21,6 +22,7 @@ namespace Обрезка_аудио
             //    TopHeight = 100,
             //    BottomHeight = 100
             //};
+            var imgData = new MemoryStream();
             PathToAudio = pathAudio;
             var myRendererSettings = new StandardWaveFormRendererSettings()
             {
@@ -29,13 +31,15 @@ namespace Обрезка_аудио
                 BottomHeight = 100,
                 TopPeakPen = new Pen(Color.FromArgb(196, 197, 53, 0)),
                 BottomPeakPen = new Pen(Color.FromArgb(196, 79, 26, 0)),
-                BackgroundColor = Color.White
+                BackgroundColor = Color.White,
+                PixelsPerPeak = 2
             };
-            var image = new WaveFormRenderer().Render(new AudioFileReader(pathAudio), new RmsPeakProvider(200), myRendererSettings);
-            var index = Environment.ProcessPath.ToLower().IndexOf("обрезка аудио") + "обрезка аудио".Length + 1;
-            var pathToImage = Environment.ProcessPath.Substring(0, index) + "Image\\waveform2.png";
-            image.Save(pathToImage, ImageFormat.Png);
-            return pathToImage;
+            using (var waveStream = new AudioFileReader(pathAudio))
+            {
+                var image = new WaveFormRenderer().Render(waveStream, new RmsPeakProvider(200), myRendererSettings);
+                image.Save(imgData, ImageFormat.Png);
+            }
+            return imgData;
         }
     }
 }

@@ -84,6 +84,5 @@ namespace Обрезка_аудио
             leftSlider.Value = Math.Min(rightSlider.Value, leftSlider.Value);
             middleSlider.Value = Math.Min(middleSlider.Value, rightSlider.Value);
         }
-
     }
 }

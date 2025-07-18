@@ -30,15 +30,15 @@
     </UserControl.Resources>
     <Grid>
         <Border BorderThickness="1,1,1,0" BorderBrush="Black" VerticalAlignment="Center"/>
-        <Slider x:Name="leftSlider" Template="{StaticResource ThreeSlider}" Margin="0,0,10,0"
+        <Slider Name="leftSlider" Template="{StaticResource ThreeSlider}" Margin="0,0,10,0"
             Minimum="{Binding ElementName=root, Path=Minimum}"
             Maximum="{Binding ElementName=root, Path=Maximum}"
             Value="{Binding ElementName=root, Path=LeftValue}" ValueChanged="LeftSlider_ValueChanged"/>
-        <Slider x:Name="middleSlider" Template="{StaticResource ThreeSlider}" Margin="10,0,10,0"
+        <Slider Name="middleSlider" Template="{StaticResource ThreeSlider}" Margin="10,0,10,0"
             Minimum="{Binding ElementName=root, Path=Minimum}"
             Maximum="{Binding ElementName=root, Path=Maximum}"
             Value="{Binding ElementName=root, Path=MiddleValue}" ValueChanged="MiddleSlider_ValueChanged"/>
-        <Slider x:Name="rightSlider" Template="{StaticResource ThreeSlider}" Margin="20,0,0,0"
+        <Slider Name="rightSlider" Template="{StaticResource ThreeSlider}" Margin="20,0,0,0"
             Minimum="{Binding ElementName=root, Path=Minimum}"
             Maximum="{Binding ElementName=root, Path=Maximum}"
             Value="{Binding ElementName=root, Path=RightValue}" ValueChanged="RightSlider_ValueChanged"/>

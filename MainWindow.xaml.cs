@@ -1,5 +1,9 @@
-﻿using NAudio.Wave;
+﻿using Microsoft.Win32;
+using NAudio.Wave;
 using System;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,10 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using Microsoft.Win32;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
-using System.Diagnostics;
-using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Обрезка_аудио
 {
@@ -30,8 +31,6 @@ namespace Обрезка_аудио
         public MainWindow()
         {
             InitializeComponent();
-            leftTimeLine.Text = "00:00:00";
-            rightTimeLine.Text = "00:00:00";
         }
 
         // When the media opens, initialize the timelineSlider maximum value to the total number of miliseconds in the length of the media clip.
@@ -58,6 +57,7 @@ namespace Обрезка_аудио
         private void Element_MediaEnded(object sender, EventArgs e)
         {
             mediaAudio.Stop();
+            mediaAudio.Play();
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -81,11 +81,20 @@ namespace Обрезка_аудио
 
         private void timelineSlider_LeftValueChanged(object sender, EventArgs e)
         {
-            mediaAudio.Pause();
-            leftTimeLine.Text = TimeSpan.FromMilliseconds(timelineSlider.LeftValue).ToString(@"hh\:mm\:ss");
-            timelineSlider.MiddleValue = timelineSlider.LeftValue;
-            mediaAudio.Position = TimeSpan.FromMilliseconds(timelineSlider.MiddleValue);
-            mediaAudio.Play();
+            if (isPlay)
+            {
+                mediaAudio.Pause();
+                leftTimeLine.Text = TimeSpan.FromMilliseconds(timelineSlider.LeftValue).ToString(@"hh\:mm\:ss");
+                timelineSlider.MiddleValue = timelineSlider.LeftValue;
+                mediaAudio.Position = TimeSpan.FromMilliseconds(timelineSlider.MiddleValue);
+                mediaAudio.Play();
+            }
+            else
+            {
+                leftTimeLine.Text = TimeSpan.FromMilliseconds(timelineSlider.LeftValue).ToString(@"hh\:mm\:ss");
+                timelineSlider.MiddleValue = timelineSlider.LeftValue;
+                mediaAudio.Position = TimeSpan.FromMilliseconds(timelineSlider.MiddleValue);
+            }
         }
 
         private void timelineSlider_RightValueChanged(object sender, EventArgs e)
@@ -145,9 +154,10 @@ namespace Обрезка_аудио
 
             volume.FontSize *= xChange;
             time.FontSize *= xChange;
+            slash.FontSize *= xChange;
             checkboxTime.FontSize *= xChange;
-            leftTimeLine.FontSize *= xChange;
-            rightTimeLine.FontSize *= xChange;
+            //leftTimeLine.FontSize *= xChange;
+            //rightTimeLine.FontSize *= xChange;
             duration.FontSize *= xChange;
 
             if (xChange > 1 && yChange > 1)
@@ -164,18 +174,23 @@ namespace Обрезка_аудио
 
         private void open_Click(object sender, RoutedEventArgs e)
         {
+            mediaAudio.Stop();
             var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "WAV files (*.wav)|*.wav|All files (*.*)|*.*";
             openFileDialog.InitialDirectory = Environment.ProcessPath;
             if (openFileDialog.ShowDialog() == true)
             {
-                // Create source
-                BitmapImage myBitmapImage = new BitmapImage();
-                // BitmapImage.UriSource must be in a BeginInit/EndInit block
-                myBitmapImage.BeginInit();
-                myBitmapImage.UriSource = new Uri(audioRender.MakeImageFromAudio(openFileDialog.FileName), UriKind.Absolute);
-                myBitmapImage.EndInit();
-                waveform.Source = myBitmapImage;
+                using (var image = audioRender.MakeImageFromAudio(openFileDialog.FileName))
+                {
+                    // Create source
+                    var myBitmapImage = new BitmapImage();
+                    // BitmapImage.UriSource must be in a BeginInit/EndInit block
+                    myBitmapImage.BeginInit();
+                    myBitmapImage.StreamSource = image;
+                    myBitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                    myBitmapImage.EndInit();
+                    waveform.Source = myBitmapImage;
+                }
                 mediaAudio.Source = new Uri(openFileDialog.FileName, UriKind.Absolute);
             }
         }
@@ -190,17 +205,76 @@ namespace Обрезка_аудио
                 var source = new AudioFileReader(audioRender.PathToAudio);
                 var start = TimeSpan.FromMilliseconds(timelineSlider.LeftValue);
                 var end = TimeSpan.FromMilliseconds(timelineSlider.RightValue) - start;
-                var nameOfFiles = new string[(int)Math.Round(end.TotalSeconds, MidpointRounding.AwayFromZero)];
-                var substring = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.Length - 4);
-                for (var i = 0; i < nameOfFiles.Length; i++) nameOfFiles[i] = substring + '_' + (i + 1) + ".wav";
-                foreach(var i in nameOfFiles)
+                if ((bool)checkbox.IsChecked)
+                {
+                    var nameOfFiles = new string[(int)Math.Round(end.TotalSeconds, MidpointRounding.AwayFromZero)];
+                    var substring = saveFileDialog.FileName.Substring(0, saveFileDialog.FileName.Length - 4);
+                    for (var i = 0; i < nameOfFiles.Length; i++) nameOfFiles[i] = substring + '_' + (i + 1) + ".wav";
+                    foreach (var i in nameOfFiles)
+                    {
+                        source.CurrentTime = start;
+                        var trimmed = source.Take(TimeSpan.FromSeconds(TimeSpan.Parse(checkboxTime.Text).TotalSeconds));
+                        WaveFileWriter.CreateWaveFile16(i, trimmed);
+                        start += TimeSpan.FromSeconds(TimeSpan.Parse(checkboxTime.Text).TotalSeconds);
+                    }
+                }
+                else
                 {
                     source.CurrentTime = start;
-                    var trimmed = source.Take(TimeSpan.FromSeconds(1));
-                    WaveFileWriter.CreateWaveFile16(i, trimmed);
-                    start += TimeSpan.FromSeconds(1);
+                    WaveFileWriter.CreateWaveFile16(saveFileDialog.FileName, source.Take(end));
                 }
             }
+        }
+
+        private void leftTimeLine_UpValueChanged(object sender, EventArgs e)
+        {
+            if (TimeSpan.Parse(leftTimeLine.Text).TotalMilliseconds + TimeSpan.FromSeconds(1).TotalMilliseconds < mediaAudio.NaturalDuration.TimeSpan.TotalMilliseconds)
+            {
+                leftTimeLine.Text = (TimeSpan.Parse(leftTimeLine.Text) + TimeSpan.FromSeconds(1)).ToString();
+                timelineSlider.LeftValue = TimeSpan.Parse(leftTimeLine.Text).TotalMilliseconds;
+            }
+        }
+
+        private void leftTimeLine_DownValueChanged(object sender, EventArgs e)
+        {
+            if (leftTimeLine.Text != "00:00:00")
+            {
+                leftTimeLine.Text = (TimeSpan.Parse(leftTimeLine.Text) - TimeSpan.FromSeconds(1)).ToString();
+                timelineSlider.LeftValue = TimeSpan.Parse(leftTimeLine.Text).TotalMilliseconds;
+            }
+        }
+
+        private void rightTimeLine_UpValueChanged(object sender, EventArgs e)
+        {
+            if (TimeSpan.Parse(rightTimeLine.Text).TotalMilliseconds + TimeSpan.FromSeconds(1).TotalMilliseconds < mediaAudio.NaturalDuration.TimeSpan.TotalMilliseconds)
+            {
+                rightTimeLine.Text = (TimeSpan.Parse(rightTimeLine.Text) + TimeSpan.FromSeconds(1)).ToString();
+                timelineSlider.RightValue = TimeSpan.Parse(rightTimeLine.Text).TotalMilliseconds;
+            }
+        }
+
+        private void rightTimeLine_DownValueChanged(object sender, EventArgs e)
+        {
+            if (rightTimeLine.Text != "00:00:00")
+            {
+                rightTimeLine.Text = (TimeSpan.Parse(rightTimeLine.Text) - TimeSpan.FromSeconds(1)).ToString();
+                timelineSlider.RightValue = TimeSpan.Parse(rightTimeLine.Text).TotalMilliseconds;
+            }
+        }
+
+        private void checkboxTime_UpValueChanged(object sender, EventArgs e)
+        {
+            if (TimeSpan.Parse(checkboxTime.Text).TotalMilliseconds + TimeSpan.FromSeconds(1).TotalMilliseconds < mediaAudio.NaturalDuration.TimeSpan.TotalMilliseconds) checkboxTime.Text = (TimeSpan.Parse(checkboxTime.Text) + TimeSpan.FromSeconds(1)).ToString();
+        }
+
+        private void checkboxTime_DownValueChanged(object sender, EventArgs e)
+        {
+            if (checkboxTime.Text != "00:00:00") checkboxTime.Text = (TimeSpan.Parse(checkboxTime.Text) - TimeSpan.FromSeconds(1)).ToString();
+        }
+
+        private void mediaAudio_Initialized(object sender, EventArgs e)
+        {
+            if(timelineSlider is not null) timelineSlider.Visibility = Visibility.Visible;
         }
     }
 }

@@ -19,7 +19,9 @@
   <ItemGroup>
     <None Remove="Image\PausePlay.png" />
     <None Remove="Image\StopButton.png" />
-    <None Remove="Image\waveform2.png" />
+    <None Remove="Image\StopButton2.png" />
+    <None Remove="Image\Tokijjskijj_gul_-_Opening_original_1_sezon_60672129.mp3" />
+    <None Remove="Image\Tokijjskijj_gul_-_Opening_original_1_sezon_60672129.wav" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +32,6 @@
   <ItemGroup>
     <Resource Include="Image\PausePlay.png" />
     <Resource Include="Image\StopButton.png" />
-    <Resource Include="Image\waveform2.png" />
   </ItemGroup>
 
 </Project>

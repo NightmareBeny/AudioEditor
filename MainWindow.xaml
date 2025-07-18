@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Обрезка_аудио"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="810" SizeChanged="Window_SizeChanged">
+        Title="MainWindow" Height="350" Width="830" SizeChanged="Window_SizeChanged">
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Файл">
@@ -22,19 +22,21 @@
                 <Grid Margin="0 30">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="0.3*"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="0.5*"/>
                     </Grid.RowDefinitions>
-                    <MediaElement Name="mediaAudio" Stretch="Fill" LoadedBehavior="Manual" UnloadedBehavior="Stop" MediaOpened="Element_MediaOpened" MediaEnded="Element_MediaEnded"/>
+                    <MediaElement Name="mediaAudio" Stretch="Fill" LoadedBehavior="Manual" UnloadedBehavior="Stop" MediaOpened="Element_MediaOpened" MediaEnded="Element_MediaEnded" Initialized="mediaAudio_Initialized"/>
                     <Image Name="waveform" Margin="50 0" HorizontalAlignment="Center" Stretch="Fill"/>
                     <!--Seek to slider. Ths slider allows you to jump to different parts of the media playback.-->
                     <local:ThreeSlider x:Name="timelineSlider" Visibility="Hidden" VerticalAlignment="Center" Margin="{Binding ElementName=waveform, Path=Margin}" Cursor="Hand"
                                        LeftValueChanged="timelineSlider_LeftValueChanged" MiddleValueChanged="timelineSlider_MiddleValueChanged" RightValueChanged="timelineSlider_RightValueChanged"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <TextBlock Name="time" VerticalAlignment="Center" Margin="5">Время</TextBlock>
-                        <TextBox Name="leftTimeLine" VerticalAlignment="Center">00:00:00</TextBox>
-                        <TextBlock VerticalAlignment="Center">-</TextBlock>
-                        <TextBox Name="rightTimeLine" VerticalAlignment="Center">00:00:00</TextBox>
+                        <local:NumericUpDown x:Name="leftTimeLine" VerticalContentAlignment="Center" Margin="10 0" UpValueChanged="leftTimeLine_UpValueChanged" DownValueChanged="leftTimeLine_DownValueChanged"/>
+                        <!--<TextBox Name="leftTimeLine" VerticalAlignment="Center">00:00:00</TextBox>-->
+                        <TextBlock Name="slash" VerticalAlignment="Center">-</TextBlock>
+                        <local:NumericUpDown x:Name="rightTimeLine" VerticalContentAlignment="Center" Margin="10 0" UpValueChanged="rightTimeLine_UpValueChanged" DownValueChanged="rightTimeLine_DownValueChanged"/>
+                        <!--<TextBox Name="rightTimeLine" VerticalAlignment="Center">00:00:00</TextBox>-->
                         <TextBlock Name="duration" VerticalAlignment="Center"/>
                     </StackPanel>
                     <DockPanel Grid.Row="2">
@@ -51,7 +53,7 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="5 0" HorizontalAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Right">
                             <CheckBox Name="checkbox" VerticalContentAlignment="Center" Content="Нарезать на одинаковые по длине отрезки времени"/>
-                            <TextBox Name="checkboxTime" VerticalAlignment="Center" Margin="5 0 0 0">00:00:00</TextBox>
+                            <local:NumericUpDown x:Name="checkboxTime" VerticalContentAlignment="Center" Margin="5 0" UpValueChanged="checkboxTime_UpValueChanged" DownValueChanged="checkboxTime_DownValueChanged"/>
                         </StackPanel>
                     </DockPanel>
                 </Grid>
