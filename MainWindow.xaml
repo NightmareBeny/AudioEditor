@@ -5,52 +5,58 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Обрезка_аудио"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="800">
+        Title="MainWindow" Height="350" Width="830" SizeChanged="Window_SizeChanged">
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Файл">
-                <MenuItem Header="Открыть" Name="Open"/>
+                <MenuItem Header="Открыть" Name="open" Click="open_Click"/>
                 <Separator/>
-                <MenuItem Header="Сохранить" Name="Save"/>
-                <MenuItem Header="Сохранить как" Name="SaveAs"/>
+                <MenuItem Header="Сохранить" Name="save" Click="save_Click"/>
+                <MenuItem Header="Сохранить как" Name="saveAs"/>
             </MenuItem>
-            <MenuItem Header="Справка" Name="Help"/>
+            <MenuItem Header="Настройки" Name="settings"/>
+            <MenuItem Header="Справка" Name="help"/>
         </Menu>
         <TabControl>
-            <TabItem Header="Аудиодорожка" Name="Audio">
-                <StackPanel VerticalAlignment="Center">
-                    <MediaElement Stretch="Fill" LoadedBehavior="Manual" UnloadedBehavior="Stop" MediaOpened="Element_MediaOpened" MediaEnded="Element_MediaEnded"
-                                  Source="C:\Users\naitm\Desktop\ГЗ\Обрезка аудио\Image\Tokijjskijj_gul_-_Opening_original_1_sezon_60672129.mp3"
-                                  Name="MediaAudio"/>
-                    <Image Source="/Image/waveform.png" HorizontalAlignment="Center"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <!-- Play button. -->
-                        <Image Source="/Image/PlayButton.png" MouseDown="OnMouseDownPlayMedia" Width="50" Margin="5" />
-                        <!-- Pause button. -->
-                        <Image Source="/Image/PauseButton.png" MouseDown="OnMouseDownPauseMedia" Width="50" Margin="5" />
-                        <!-- Stop button. -->
-                        <Image Source="/Image/StopButton.png" MouseDown="OnMouseDownStopMedia" Width="50" Margin="5" />
+            <TabItem Header="Аудиодорожка" Name="audio">
+                <Grid Margin="0 30">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="0.5*"/>
+                    </Grid.RowDefinitions>
+                    <MediaElement Name="mediaAudio" Stretch="Fill" LoadedBehavior="Manual" UnloadedBehavior="Stop" MediaOpened="Element_MediaOpened" MediaEnded="Element_MediaEnded" Initialized="mediaAudio_Initialized"/>
+                    <Image Name="waveform" Margin="50 0" HorizontalAlignment="Center" Stretch="Fill"/>
+                    <!--Seek to slider. Ths slider allows you to jump to different parts of the media playback.-->
+                    <local:ThreeSlider x:Name="timelineSlider" Visibility="Hidden" VerticalAlignment="Center" Margin="{Binding ElementName=waveform, Path=Margin}" Cursor="Hand"
+                                       LeftValueChanged="timelineSlider_LeftValueChanged" MiddleValueChanged="timelineSlider_MiddleValueChanged" RightValueChanged="timelineSlider_RightValueChanged"/>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <TextBlock Name="time" VerticalAlignment="Center" Margin="5">Время</TextBlock>
+                        <local:NumericUpDown x:Name="leftTimeLine" VerticalContentAlignment="Center" Margin="10 0" UpValueChanged="leftTimeLine_UpValueChanged" DownValueChanged="leftTimeLine_DownValueChanged"/>
+                        <!--<TextBox Name="leftTimeLine" VerticalAlignment="Center">00:00:00</TextBox>-->
+                        <TextBlock Name="slash" VerticalAlignment="Center">-</TextBlock>
+                        <local:NumericUpDown x:Name="rightTimeLine" VerticalContentAlignment="Center" Margin="10 0" UpValueChanged="rightTimeLine_UpValueChanged" DownValueChanged="rightTimeLine_DownValueChanged"/>
+                        <!--<TextBox Name="rightTimeLine" VerticalAlignment="Center">00:00:00</TextBox>-->
+                        <TextBlock Name="duration" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <!-- Volume slider. This slider allows a Volume range between 0 and 1. -->
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock VerticalAlignment="Center" Margin="5">Громкость</TextBlock>
-                            <Slider Name="volumeSlider" VerticalAlignment="Center" ValueChanged="ChangeMediaVolume" 
-                            Minimum="0" Maximum="1" Value="0.5" Width="70"/>
+                    <DockPanel Grid.Row="2">
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                            <Button Name="playPauseButton" Style="{DynamicResource PlayPauseButton}" Margin="5" MaxWidth="100" MaxHeight="100" Cursor="Hand" Click="PlayPauseButton_Click">
+                                <Image Source="/Image/PausePlay.png"/>
+                            </Button>
+                            <Button Name="stopButton" Style="{DynamicResource StopButton}" Margin="5" MaxWidth="100" MaxHeight="100" Cursor="Hand" Click="StopButton_Click">
+                                <Image Source="/Image/stopButton.png"/>
+                            </Button>
+                            <!-- volume slider. This slider allows a volume range between 0 and 1. -->
+                            <TextBlock Name="volume" VerticalAlignment="Center" Margin="5">Громкость</TextBlock>
+                            <Slider Name="volumeSlider" VerticalAlignment="Center" Minimum="0" Maximum="1" Value="0.5" Width="100" Cursor="Hand" ValueChanged="ChangeMediavolume"/>
                         </StackPanel>
-                        <!-- Volume slider. This slider allows you to change the speed of the media playback. -->
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Margin="5"  VerticalAlignment="Center">Скорость воспроизведения</TextBlock>
-                            <Slider Name="speedRatioSlider" VerticalAlignment="Center" ValueChanged="ChangeMediaSpeedRatio" 
-                                Value="1" Width="70" />
+                        <StackPanel Orientation="Horizontal" Margin="5 0" HorizontalAlignment="Right" VerticalAlignment="Center" DockPanel.Dock="Right">
+                            <CheckBox Name="checkbox" VerticalContentAlignment="Center" Content="Нарезать на одинаковые по длине отрезки времени"/>
+                            <local:NumericUpDown x:Name="checkboxTime" VerticalContentAlignment="Center" Margin="5 0" UpValueChanged="checkboxTime_UpValueChanged" DownValueChanged="checkboxTime_DownValueChanged"/>
                         </StackPanel>
-                        <!-- Seek to slider. Ths slider allows you to jump to different parts of the media playback. -->
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Margin="5"  VerticalAlignment="Center">Поиск</TextBlock>
-                            <Slider Name="timelineSlider" Margin="5" ValueChanged="SeekToMediaPosition" Width="70"/>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
+                    </DockPanel>
+                </Grid>
             </TabItem>
             <TabItem Header="Спектрограмма" Name="Spectr">
                 

@@ -10,11 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Image\PauseButton.png" />
-    <None Remove="Image\PlayButton.png" />
+    <Compile Remove="Audio\**" />
+    <EmbeddedResource Remove="Audio\**" />
+    <None Remove="Audio\**" />
+    <Page Remove="Audio\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Image\PausePlay.png" />
     <None Remove="Image\StopButton.png" />
-    <None Remove="Image\waveform.png" />
-    <None Remove="wpfsvl-Source.zip" />
+    <None Remove="Image\StopButton2.png" />
+    <None Remove="Image\Tokijjskijj_gul_-_Opening_original_1_sezon_60672129.mp3" />
+    <None Remove="Image\Tokijjskijj_gul_-_Opening_original_1_sezon_60672129.wav" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,10 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Image\PauseButton.png" />
-    <Resource Include="Image\PlayButton.png" />
+    <Resource Include="Image\PausePlay.png" />
     <Resource Include="Image\StopButton.png" />
-    <Resource Include="Image\waveform.png" />
   </ItemGroup>
 
 </Project>
