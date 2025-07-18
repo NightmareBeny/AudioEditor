@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="AudioEditor-Image.zip" />
     <None Remove="Image\PausePlay.png" />
     <None Remove="Image\StopButton.png" />
     <None Remove="Image\StopButton2.png" />
